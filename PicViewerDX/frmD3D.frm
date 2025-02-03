@@ -57,9 +57,9 @@ Private Sub Form_Load()
     D3DXMatrixRotationY matWorld, 0
     D3DDevice.SetTransform D3DTS_WORLD, matWorld
     
-    SetPerspective
-    SetCamera
-    
+'    SetPerspective
+'    SetCamera
+    SetViewMatrix
     Dim sq As K3D
     Set sq = myDx.Add3D
     
@@ -68,6 +68,29 @@ Private Sub Form_Load()
     bitmap = GetImage(path, w, h)
     sq.Square path, w, h
     
+End Sub
+
+Private Sub SetViewMatrix()
+    Dim ViewMatrix As D3DMATRIX
+    Dim EyePosition As D3DVECTOR
+    Dim LookAtPosition As D3DVECTOR
+    Dim UpVector As D3DVECTOR
+    
+
+    
+    ' 修改为轴侧角的镜头位置和观察方向
+    EyePosition.X = 5 ' X坐标
+    EyePosition.Y = 5 ' Y坐标
+    EyePosition.z = 5 ' Z坐标
+    LookAtPosition.X = 0
+    LookAtPosition.Y = 0
+    LookAtPosition.z = 0
+    UpVector.X = 0
+    UpVector.Y = 1
+    UpVector.z = 0
+    
+    D3DXMatrixLookAtLH ViewMatrix, EyePosition, LookAtPosition, UpVector
+    D3DDevice.SetTransform D3DTS_VIEW, ViewMatrix
 End Sub
 
 'Private Sub SetCamera()
@@ -97,41 +120,41 @@ End Sub
 '    D3DDevice.SetTransform D3DTS_VIEW, viewMatrix
 'End Sub
 
-Private Sub SetPerspective()
-    Dim projectionMatrix As D3DMATRIX
-    Dim fovy As Single
-    fovy = 1.0472 ' 约 60 度视角，转换为弧度
-    Dim aspect As Single
-    aspect = Me.ScaleWidth / Me.ScaleHeight
-    Dim zn As Single
-    zn = 1#
-    Dim zf As Single
-    zf = 100#
-    D3DXMatrixPerspectiveFovLH projectionMatrix, fovy, aspect, zn, zf
-    D3DDevice.SetTransform D3DTS_PROJECTION, projectionMatrix
-End Sub
-
-Private Sub SetCamera()
-    Const c_VerticalAngle As Single = -PI / 4
-    Const c_HorizontalAngle As Single = 0
-    Dim CameraPos As D3DVECTOR
-    Dim MyD3DMATRIX As D3DMATRIX
-    
-    D3DXMatrixRotationX MyD3DMATRIX, c_VerticalAngle  'MyD3DMATRIX 乘以了一个绕 X 轴旋转的变换矩阵
-    D3DDevice.SetTransform D3DTS_VIEW, MyD3DMATRIX  '初始化视图矩阵
-
-    D3DXMatrixRotationY MyD3DMATRIX, c_HorizontalAngle 'MyD3DMATRIX 乘以了一个绕 Y 轴旋转的变换矩阵
-    D3DDevice.MultiplyTransform D3DTS_VIEW, MyD3DMATRIX '视图矩阵乘上变换矩阵MyD3DMATRIX
-
-    With CameraPos
-     .X = 0
-     .Y = 0
-     .z = -10
-    End With
-
-    D3DXMatrixTranslation MyD3DMATRIX, -CameraPos.X, -CameraPos.Y, -CameraPos.z '使矩阵 MyD3DMATRIX 平移 -CameraPos.x, -CameraPos.y, -CameraPos.z
-    D3DDevice.MultiplyTransform D3DTS_VIEW, MyD3DMATRIX '视图矩阵乘上变换矩阵MyD3DMATRIX
-End Sub
+'Private Sub SetPerspective()
+'    Dim projectionMatrix As D3DMATRIX
+'    Dim fovy As Single
+'    fovy = 1.0472 ' 约 60 度视角，转换为弧度
+'    Dim aspect As Single
+'    aspect = Me.ScaleWidth / Me.ScaleHeight
+'    Dim zn As Single
+'    zn = 1#
+'    Dim zf As Single
+'    zf = 100#
+'    D3DXMatrixPerspectiveFovLH projectionMatrix, fovy, aspect, zn, zf
+'    D3DDevice.SetTransform D3DTS_PROJECTION, projectionMatrix
+'End Sub
+'
+'Private Sub SetCamera()
+'    Const c_VerticalAngle As Single = -PI / 4
+'    Const c_HorizontalAngle As Single = 0
+'    Dim CameraPos As D3DVECTOR
+'    Dim MyD3DMATRIX As D3DMATRIX
+'
+'    D3DXMatrixRotationX MyD3DMATRIX, c_VerticalAngle  'MyD3DMATRIX 乘以了一个绕 X 轴旋转的变换矩阵
+'    D3DDevice.SetTransform D3DTS_VIEW, MyD3DMATRIX  '初始化视图矩阵
+'
+'    D3DXMatrixRotationY MyD3DMATRIX, c_HorizontalAngle 'MyD3DMATRIX 乘以了一个绕 Y 轴旋转的变换矩阵
+'    D3DDevice.MultiplyTransform D3DTS_VIEW, MyD3DMATRIX '视图矩阵乘上变换矩阵MyD3DMATRIX
+'
+'    With CameraPos
+'     .X = 0
+'     .Y = 0
+'     .z = -10
+'    End With
+'
+'    D3DXMatrixTranslation MyD3DMATRIX, -CameraPos.X, -CameraPos.Y, -CameraPos.z '使矩阵 MyD3DMATRIX 平移 -CameraPos.x, -CameraPos.y, -CameraPos.z
+'    D3DDevice.MultiplyTransform D3DTS_VIEW, MyD3DMATRIX '视图矩阵乘上变换矩阵MyD3DMATRIX
+'End Sub
 
 Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
     If Button = 1 Then
